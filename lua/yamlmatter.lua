@@ -3,7 +3,7 @@ local M = {}
 -- Default configuration
 M.config = {
   key_value_padding = 4, -- Default padding between key and value
-  conceallevel = 1, -- on what level start conceal the yaml text
+  conceallevel = 1,      -- on what level start conceal the yaml text
   icon_mappings = {
     -- Default icon mappings
     title = '',
@@ -202,6 +202,7 @@ function M.display_frontmatter()
               end_col = #next_line,
               hl_group = 'Conceal',
               conceal = '',
+              conceal_lines = '',
             })
             j = j + 1
           else
@@ -222,10 +223,10 @@ function M.display_frontmatter()
 
       -- Build virt_text with different highlight groups
       local virt_text = {
-        { icon .. ' ', M.config.highlight_groups.icon },
-        { key_trimmed, M.config.highlight_groups.key },
+        { icon .. ' ',    M.config.highlight_groups.icon },
+        { key_trimmed,    M.config.highlight_groups.key },
         { padding_spaces, '' }, -- No highlight group for padding
-        { display_value, M.config.highlight_groups.value },
+        { display_value,  M.config.highlight_groups.value },
       }
 
       -- Add virtual text
@@ -248,7 +249,7 @@ function M.reset_frontmatter_view(disable)
     return
   end
   if
-    vim.api.nvim_get_option_value('conceallevel', { scope = 'local' }) >= M.config.conceallevel
+      vim.api.nvim_get_option_value('conceallevel', { scope = 'local' }) >= M.config.conceallevel
   then
     M.display_frontmatter()
   end
@@ -275,7 +276,7 @@ local function unconceal_current_line()
       local extmark_id = extmark[1]
       local _, start_col, end_col = unpack(
         extmark[4].end_col and { extmark[2], extmark[3], extmark[4].end_col }
-          or { extmark[2], extmark[3], extmark[3] }
+        or { extmark[2], extmark[3], extmark[3] }
       )
 
       -- Remove the extmark to un-conceal the line
