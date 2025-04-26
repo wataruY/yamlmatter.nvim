@@ -24,6 +24,7 @@ M.config = {
     value = 'Type',
     parameter = 'String', -- New highlight group for parameters
   },
+  conceal_lines = vim.version().minor >= 11
 }
 
 -- Namespace for extmarks
@@ -34,6 +35,10 @@ local extmark_ids = {}
 
 -- Table to keep track of un-concealed lines in insert mode
 local unconcealed_lines = {}
+
+local get_conceal_line_args = function(args)
+  return vim.tbl_extend('keep', args, M.config and { conceal_lines = '' } or {})
+end
 
 local function parse_yaml(yaml_text)
   local data = {}
@@ -197,13 +202,13 @@ function M.display_frontmatter()
         while j <= end_line - 1 do
           local next_line = lines[j]
           if next_line:match('^%s*%-%s*.+$') then
-            vim.api.nvim_buf_set_extmark(bufnr, ns_id, j - 1, 0, {
+            local args = get_conceal_line_args({
               end_line = j - 1,
               end_col = #next_line,
               hl_group = 'Conceal',
               conceal = '',
-              conceal_lines = '',
             })
+            vim.api.nvim_buf_set_extmark(bufnr, ns_id, j - 1, 0, args)
             j = j + 1
           else
             break
